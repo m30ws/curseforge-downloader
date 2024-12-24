@@ -21,7 +21,7 @@ import shutil
 
 import time
 
-from urllib.request import urlopen, urlretrieve
+import urllib.request
 
 PREFIX = "* " # "#"
 
@@ -63,6 +63,14 @@ def kplus_copytree(src, dst, symlinks=False, ignore=None):
 # 				return True
 # 	except:
 # 		return False
+
+
+def fetch_url(url, where_to_save):
+	""" """
+	opener = urllib.request.build_opener()
+	opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+	urllib.request.install_opener(opener)
+	return urllib.request.urlretrieve(url, where_to_save)
 
 
 def main(file, *args):
@@ -206,7 +214,7 @@ def main(file, *args):
 				# time.sleep(0.01)
 				pass
 			else:
-				resp = urlretrieve(forge_url, forge_savename)
+				resp = fetch_url(forge_url, forge_savename)
 
 			print(f"{PREFIX}Done. ({forge_savename}) ... {time_passed(forgedl_time)}")
 
@@ -273,7 +281,7 @@ def main(file, *args):
 
 			try:
 				# Download json info
-				with urlopen(mod_url) as resp:
+				with urllib.request.urlopen(mod_url) as resp:
 					jsn = resp.read().decode(encoding='utf-8')
 				fname = json.loads(jsn)['data']['fileName']
 
@@ -289,7 +297,7 @@ def main(file, *args):
 					# time.sleep(0.01)
 					pass
 				else:
-					resp = urlretrieve(mod_url, mod_savename)
+					resp = fetch_url(mod_url, mod_savename)
 
 				done += 1
 				if PRINT_DOWNLOAD_PROGRESS: print(f"[{ratio_s()}] downloaded. ({mod_savename}) ... {time_passed(mod_time)}")
